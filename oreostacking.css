@@ -1,0 +1,31 @@
+body{
+    background-color: aliceblue ;
+    color: #313330;
+}
+
+.header{
+    width= 200px;
+    align-self: center;
+    position: relative;
+    left:500px;
+    resize: vertical
+}
+
+ button {
+ background-color: #313330;
+            border-radius: 10px;
+            box-sizing: border-box;
+            
+  color: #ffffff;
+  padding: 8px 8px;
+  text-align: center;
+  font-size: 12px;
+  margin: 2px 2px;
+  cursor: pointer;
+}
+
+
+div{
+    position: relative;
+    left:100px;
+}

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <link rel="stylesheet" type="text/css" href="oreostacking.css" media="screen"/>
+    </head>
+<body>
+
+    
+    <img id="o"  src="o.png"  hidden="true">
+    <img id="o-down" src="o-down.png"  hidden="true">
+    <img id="re"  src="re.png"  hidden="true">
+    <h1 class="header">OREO STACKER</h1>
+    <div>
+    <h2>Enter String</h2>
+    <input type="text" id="fname" name="fname"><br><br>
+    <button onclick="createnew()">generate </button>
+    <p id="error"></p></div>
+    <button onclick="zoomin()">ZOOM IN</button><button onclick="zoomout()">ZOOM OUT</button><br>
+    <div></div>
+
+    
+<script>
+    var instr
+    var sno =0;
+    var dragged,resize="null",x,y,temp,scale=1;
+    var stacks=[]
+    
+    function createnew(){
+        var can = document.createElement("CANVAS");
+        sno++;
+        var ctx = can.getContext("2d");
+        ctx.canvas.width  =150;
+        ctx.canvas.height  = 400;
+        ctx.canvas.draggable=true;
+        ctx.canvas.ondragstart="event.dataTransfer.setData('text/plain',null)"
+        ctx.clearRect(0, 0, can.width, can.height);
+        can.id=sno  
+    
+    
+        can.addEventListener('mouseover', function() {
+        ctx.canvas.style.border= "3px solid #ffa8a8";}, false);
+        can.addEventListener('mouseout', function() {
+        ctx.canvas.style.border= "";}, false);
+    
+      
+
+        can.addEventListener("drag", function(event) {}, false);
+
+        can.addEventListener("dragstart", function(event) {
+            dragged = event.target;
+            x=event.clientX
+                    y=event.clientY
+            
+            if(can.offsetWidth+can.offsetLeft-30<=event.clientX)
+                {   console.log('here')
+                    resize="right"
+                    x=event.clientX
+                    y=event.clientY
+                }
+            
+        }, false);
+        
+        can.addEventListener("dragend", function(event) {
+            event.target.style.opacity = "";
+        }, false);
+
+        can.addEventListener("dragover", function(event) {
+            event.preventDefault();
+        }, false);
+
+
+        can.addEventListener("drop", function(event) {
+            console.log(resize)
+            if(resize=="null")
+                {
+                    ctx.clearRect(0, 0, can.width, can.height);
+                    dragged.getContext("2d").clearRect(0, 0, dragged.width, dragged.height);
+                    generate(dragged.name,ctx)
+                    generate(can.name,dragged.getContext("2d"))
+                    temp=can.name
+                    can.name=dragged.name
+                    dragged.name=temp
+                    event.target.style.background = "";
+                }
+            else if(resize=="right")
+                { 
+                    dragged.width=dragged.width+event.clientX-pos
+                    resize=null;
+                    pos=0
+                }
+
+        }, false);
+    
+        
+        instr = document.getElementById("fname").value
+        can.name=instr;
+        ctx.canvas.name=instr;
+        stacks[sno]=instr
+        generate(instr,ctx)
+        document.body.appendChild(can);
+    }  
+    
+    document.addEventListener("drop", function(event) {
+            event.preventDefault();
+            newy=event.clientY-y+dragged.offsetTop
+            newx=event.clientX - (x-dragged.offsetLeft)
+            dragged.style.position="absolute"
+            dragged.style.top= newy.toString() + "px"
+            dragged.style.left=newx.toString()+"px"
+        }, false);
+    
+    document.addEventListener("dragend", function(event) {
+            event.target.style.opacity = "";
+            event.preventDefault();
+        }, false);
+
+    document.addEventListener("dragover", function(event) {
+            event.preventDefault();
+        }, false);
+
+    function redraw() {
+        //console.log(stacks)
+        for(i=1;i<=sno;i++)
+            {  console.log('eta')
+               var canvasnew= document.getElementById(i)
+               canvasnew.getContext("2d").clearRect(0,0,canvasnew.width,canvasnew.height)
+               generate(stacks[i],canvasnew.getContext("2d"))
+            }
+        console.log('success')
+    }
+    
+    function zoomin()
+    {   scale= scale+0.1;
+        redraw()
+    }
+    
+    function zoomout()
+    {
+        scale=scale-0.1
+        redraw()
+    }
+
+    function generate(ins,ctx) {
+        var base= 200,up,y=25;
+        console.log(scale)
+        ctx.clearRect(0,0,ctx.width,ctx.height)
+        var o = document.getElementById("o");
+        var odown = document.getElementById("o-down");
+        var re = document.getElementById("re");
+
+        while(ins.length)
+        {
+            if(ins[ins.length-1]=='o' )
+                {   //console.log('here')
+                    if(ins.length==1)
+                        {
+                           ctx.drawImage(o, y, base,100*scale,100*scale) 
+                        }
+                    else 
+                        {
+                            ctx.drawImage(odown, y-1, base,100*scale,100*scale)
+                        }
+                    base=base-10
+                    ins=ins.slice(0,ins.length-1)
+                }
+             else if(ins[ins.length-1]=='e'&& ins[ins.length-2]=='r')
+                {
+                ctx.drawImage(re,y,base,100*scale,100*scale)
+                base=base-10
+                ins=ins.slice(0,ins.length-2)
+                }
+            
+             else if(ins[ins.length-1]=='&')
+               {
+                   base=base-50
+                   ins=ins.slice(0,ins.length-1)
+               }
+             else 
+               { 
+                   console.log("error")
+                   ctx.clearRect(0, 0, c.width, c.height);
+                   document.getElementById("error").innerHTML= "Enter a proper String";
+                   break;
+               }    
+        
+        }
+    
+    //ctx.fillRect(140, 190, 10, 10);
+    
+    }
+</script>
+
+</body>
+</html>
